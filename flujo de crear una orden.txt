@@ -1,0 +1,20 @@
+┌───────────────────────────────┬──────────────────────────────────────────────┬──────────────────────────────────────────────────────────┐
+│           Analogía            │                    Código                    │                         Qué hace                         │
+├───────────────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────────────┤
+│ Hoja de pedido en blanco, sin │ new OrderEntity()                            │ idOrder vale null — nadie se lo ha puesto todavía        │
+│  número                       │                                              │                                                          │
+├───────────────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────────────┤
+│ Pasar por caja                │ orderRepository.save(order)                  │ Dispara el INSERT; Postgres genera el idOrder real       │
+│                               │                                              │ (GenerationType.IDENTITY)                                │
+├───────────────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────────────┤
+│ Engrapar la hojita al pedido, │ item.setOrder(order)                         │ Lo haces tú, a mano, en el bucle dentro de               │
+│  antes de pasar por caja      │                                              │ OrderService.save()                                      │
+├───────────────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────────────┤
+│ El número salta solo del      │ @MapsId("idOrder") en OrderItemEntity.order  │ Hibernate copia el idOrder real del padre al hijo        │
+│ pedido al ítem engrapado      │                                              │ automáticamente, justo antes de insertarlo               │
+├───────────────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────────────┤
+│ "Este número no lo escribas   │ insertable = false, updatable = false en     │ Le avisa a Hibernate que ese campo no se llena           │
+│ tú, ya te lo doy yo"          │ OrderItemEntity.idOrder                      │ directamente, sale del @MapsId de arriba                 │
+└───────────────────────────────┴──────────────────────────────────────────────┴──────────────────────────────────────────────────────────┘
+
+Guárdalo donde te sea fácil volver a verlo. Cuando te bloquees con el nombre exacto de algo, revisa aquí primero antes de pedírmelo — eso también es parte de la práctica.
