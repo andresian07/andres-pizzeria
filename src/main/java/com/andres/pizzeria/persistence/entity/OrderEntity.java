@@ -1,5 +1,6 @@
 package com.andres.pizzeria.persistence.entity;
 
+import com.andres.pizzeria.persistence.audit.OrderAuditListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,17 +10,20 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, OrderAuditListener.class})
 @Entity
 @Table(name = "pizza_order")
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderEntity {
+public class OrderEntity implements Serializable {
+    @Transient
+    private transient OrderEntity snapshot;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,4 +61,17 @@ public class OrderEntity {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                "idOrder=" + idOrder +
+                ", idCustomer='" + idCustomer + '\'' +
+                ", date=" + date +
+                ", total=" + total +
+                ", method=" + method +
+                ", additionalNotes='" + additionalNotes + '\'' +
+                ", createdDate=" + createdDate +
+                ", lastModifiedDate=" + lastModifiedDate +
+                '}';
+    }
 }

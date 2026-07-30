@@ -20,7 +20,7 @@ This project uses the Gradle wrapper — always invoke it via `./gradlew` (or `g
 
 On Windows PowerShell use `.\gradlew.bat` instead of `./gradlew`.
 
-There is currently only one placeholder test (`AndresPizzeriaApplicationTests`, just checks context loads) — no real unit/integration tests exist yet for services or controllers.
+There are currently only two tests: `AndresPizzeriaApplicationTests` (checks context loads) and `OrderRepositoryTest` (`@SpringBootTest` + `@Transactional`, covers the `takeRandomPizzaOrder` stored-procedure call) — no unit/integration tests exist yet for services or controllers.
 
 ### Database
 
@@ -56,6 +56,12 @@ Domain model: `CustomerEntity` (1) → `OrderEntity` (1) → `OrderItemEntity` (
 ### Notable gaps / in-progress state
 
 - `Customer` now has full CRUD (`CustomerRepository`, `CustomerService`, `CustomerController` under `/api/customers`), mirroring the `Pizza` pattern, including a `CustomerUpdateDto` for partial updates (`name`, `address`, `email`, `phoneNumber`).
-- `dto/OrderUpdateDto.java` is an empty placeholder (unlike `PizzaUpdateDto`, which is implemented as a record with partial-update fields `price`/`available`). Follow the `PizzaUpdateDto`/`CustomerUpdateDto` pattern when filling this in.
-- `OrderResponseDto` exists but controllers currently return entities directly (`OrderEntity`, `PizzaEntity`) rather than DTOs — entity serialization relies on `@JsonIgnore` on `OrderEntity.customer` to avoid lazy-loading issues.
-- Controllers/services return `null`/404 for missing entities rather than throwing exceptions; there's no global `@ExceptionHandler`/`@ControllerAdvice` yet.
+- `dto/OrderUpdateDto.java` is now implemented (`method`, `additionalNotes` record) — no longer the empty placeholder it used to be.
+- `Order` and `Pizza` controllers already return response DTOs (`OrderResponseDto`, `PizzaResponseDto`) rather than entities. `CustomerController` is the exception — it still returns `CustomerEntity` directly from every endpoint, unlike the other two. Bring it in line with the `Order`/`Pizza` DTO pattern (a `CustomerResponseDto`) when touching that controller.
+- All three controllers' `add()` endpoints take the raw entity as `@RequestBody` (`OrderEntity`, `PizzaEntity`, `CustomerEntity`) instead of a dedicated create DTO — callers can set fields that shouldn't be externally controlled (e.g. `idOrder`, `createdDate`). Worth introducing `*CreateDto` records, following the existing `*UpdateDto` pattern.
+- No input validation anywhere (`jakarta.validation`, `@Valid`, `@NotNull`, `@Positive`, etc.) — nothing stops a negative pizza price or a blank customer name from being persisted.
+- Controllers/services return `null`/404 for missing entities rather than throwing exceptions; there's no global `@ExceptionHandler`/`@ControllerAdvice` yet, so there's no consistent error-response shape.
+- Test coverage is limited to the two tests noted above — `OrderService`, `PizzaService`, `CustomerService`, and all three controllers are untested.
+- No Flyway/Liquibase migrations — schema evolves only via `ddl-auto=update` (see Database section above), fine for learning but not representative of a production setup.
+- No Spring Security dependency yet — the API has no authentication/authorization. Expected to be addressed once the Security coursework starts.
+- Custom `@EntityListeners` (`AuditPizzaListener`, `OrderAuditListener` in `persistence/audit/`) log before/after state on `@PostLoad`/`@PostPersist`/`@PostUpdate`/`@PreRemove` by keeping a cloned `snapshot` field on the entity (`Serializable`, `@Transient`). This is in addition to the existing `AuditingEntityListener` (`createdDate`/`lastModifiedDate`) — both listeners are registered together in `@EntityListeners({...})`.

@@ -122,6 +122,17 @@ public class OrderService {
         return null;
     }
 
+    public OrderSummary takeRandomPizzaOrder(String idCustomer, String method) {
+        Boolean orderTaken = this.orderRepository.takeRandomPizzaOrder(idCustomer, method);
+        if (Boolean.TRUE.equals(orderTaken)) {
+            OrderEntity newOrder = this.orderRepository.findTopByIdCustomerOrderByIdOrderDesc(idCustomer).orElse(null);
+            if (newOrder != null) {
+                return this.orderRepository.findSummary(newOrder.getIdOrder());
+            }
+        }
+        return null;
+    }
+
     public OrderResponseDto delete(int idOrder
     ){
         Optional<OrderEntity> optionalOrder = this.orderRepository.findById(idOrder);

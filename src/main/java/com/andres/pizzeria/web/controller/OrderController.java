@@ -31,6 +31,7 @@ public class OrderController {
         }
         return ResponseEntity.notFound().build();
 
+
     }
 
     @GetMapping("/{idOrder}")
@@ -83,7 +84,18 @@ public class OrderController {
         if(updateOrder != null){
             return ResponseEntity.ok(updateOrder);
         }
+
+
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/random-promo")
+    public ResponseEntity<OrderSummary> takeRandomPizzaOrder(@RequestParam String idCustomer, @RequestParam String method){
+        OrderSummary summary = this.orderService.takeRandomPizzaOrder(idCustomer, method);
+        if (summary != null) {
+            return ResponseEntity.ok(summary);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{idOrder}")

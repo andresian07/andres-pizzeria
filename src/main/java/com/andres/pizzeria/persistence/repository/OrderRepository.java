@@ -8,14 +8,19 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderRepository extends ListCrudRepository<OrderEntity, Integer> {
     List<OrderEntity> findAllByDateAfter(LocalDateTime date);
+
+    Optional<OrderEntity> findTopByIdCustomerOrderByIdOrderDesc(String idCustomer);
 
     List<OrderEntity> findAllByMethodIn(List<Character> methods);
 
     @Query(value = "SELECT * FROM pizza_order WHERE id_customer = :id", nativeQuery = true)
     List<OrderEntity> findCustomerOrders(@Param("id") String idCistomer);
+
+
 
     @Query("SELECT o FROM OrderEntity o WHERE o.idCustomer = :id")
     List<OrderEntity> findCustomerOrdersJpql(@Param("id") String idCustomer);
@@ -42,5 +47,7 @@ public interface OrderRepository extends ListCrudRepository<OrderEntity, Integer
     )
     OrderSummary findSummary(@Param("orderId") int orderId);
 
+    @Query(value = "CALL take_random_pizza_order(:idCustomer, :method, NULL)", nativeQuery = true)
+    Boolean takeRandomPizzaOrder(@Param("idCustomer") String idCustomer, @Param("method") String method);
 
 }
