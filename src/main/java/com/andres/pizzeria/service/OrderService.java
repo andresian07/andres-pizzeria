@@ -1,6 +1,8 @@
 package com.andres.pizzeria.service;
 
 import com.andres.pizzeria.dto.CustomerUpdateDto;
+import com.andres.pizzeria.dto.OrderCreateDto;
+import com.andres.pizzeria.dto.OrderItemCreateDto;
 import com.andres.pizzeria.dto.OrderResponseDto;
 import com.andres.pizzeria.dto.OrderUpdateDto;
 import com.andres.pizzeria.dto.PizzaUpdateDto;
@@ -84,7 +86,18 @@ public class OrderService {
         return this.orderRepository.findSummary(orderId);
     }
 
-    public OrderResponseDto save(OrderEntity order){
+    public OrderResponseDto save(OrderCreateDto orderDto){
+        OrderEntity order = new OrderEntity();
+        order.setIdCustomer(orderDto.idCustomer());
+        order.setDate(orderDto.date());
+        order.setTotal(orderDto.total());
+        order.setMethod(orderDto.method());
+        order.setAdditionalNotes(orderDto.additionalNotes());
+
+        if (orderDto.items() != null) {
+            order.setItems(orderDto.items().stream().map(this::toItemEntity).toList());
+        }
+
         if (order.getItems() != null) {
             int lineNumber = 1;
             for (OrderItemEntity item : order.getItems()) {
@@ -100,6 +113,14 @@ public class OrderService {
         // llegado del @RequestBody nunca lo trajo, por el @JsonIgnore
         OrderEntity fullOrder = this.orderRepository.findById(savedOrder.getIdOrder()).orElseThrow();
         return toResponseDto(fullOrder);
+    }
+
+    private OrderItemEntity toItemEntity(OrderItemCreateDto itemDto) {
+        OrderItemEntity item = new OrderItemEntity();
+        item.setIdPizza(itemDto.idPizza());
+        item.setQuantity(itemDto.quantity());
+        item.setPrice(itemDto.price());
+        return item;
     }
 
     public OrderResponseDto update(int idOrder, OrderUpdateDto orderUpdateDto) {

@@ -1,8 +1,8 @@
 package com.andres.pizzeria.web.controller;
 
+import com.andres.pizzeria.dto.OrderCreateDto;
 import com.andres.pizzeria.dto.OrderResponseDto;
 import com.andres.pizzeria.dto.OrderUpdateDto;
-import com.andres.pizzeria.persistence.entity.OrderEntity;
 import com.andres.pizzeria.persistence.projection.OrderSummary;
 import com.andres.pizzeria.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> add(@RequestBody OrderEntity order){
+    public ResponseEntity<OrderResponseDto> add(@RequestBody OrderCreateDto order){
         return ResponseEntity.ok(this.orderService.save(order));
     }
 

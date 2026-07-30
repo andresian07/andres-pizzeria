@@ -73,5 +73,7 @@ public class OrderEntity implements Serializable {
                 ", createdDate=" + createdDate +
                 ", lastModifiedDate=" + lastModifiedDate +
                 '}';
+
+
     }
 }

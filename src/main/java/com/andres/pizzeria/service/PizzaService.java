@@ -1,6 +1,7 @@
 package com.andres.pizzeria.service;
 
 import com.andres.pizzeria.dto.OrderResponseDto;
+import com.andres.pizzeria.dto.PizzaCreateDto;
 import com.andres.pizzeria.dto.PizzaResponseDto;
 import com.andres.pizzeria.dto.PizzaUpdateDto;
 import com.andres.pizzeria.dto.PizzaUpdatePriceDto;
@@ -56,7 +57,15 @@ public class PizzaService {
         );
     }
 
-    public PizzaResponseDto save(PizzaEntity pizza){
+    public PizzaResponseDto save(PizzaCreateDto pizzaDto){
+        PizzaEntity pizza = new PizzaEntity();
+        pizza.setName(pizzaDto.name());
+        pizza.setDescription(pizzaDto.description());
+        pizza.setPrice(pizzaDto.price());
+        pizza.setVegetarian(pizzaDto.vegetarian());
+        pizza.setVegan(pizzaDto.vegan());
+        pizza.setAvailable(pizzaDto.available());
+
         PizzaEntity pizzaGuardada = this.pizzaRepository.save(pizza);
         return toResponseDto(pizzaGuardada);
     }

@@ -1,5 +1,6 @@
 package com.andres.pizzeria.service;
 
+import com.andres.pizzeria.dto.CustomerCreateDto;
 import com.andres.pizzeria.dto.CustomerUpdateDto;
 import com.andres.pizzeria.persistence.entity.CustomerEntity;
 import com.andres.pizzeria.persistence.repository.CustomerRepository;
@@ -25,7 +26,14 @@ public class CustomerService {
         return this.customerRepository.findById(idCustomer).orElse(null);
     }
 
-    public CustomerEntity save(CustomerEntity customer){
+    public CustomerEntity save(CustomerCreateDto customerDto){
+        CustomerEntity customer = new CustomerEntity();
+        customer.setIdCustomer(customerDto.idCustomer());
+        customer.setName(customerDto.name());
+        customer.setAddress(customerDto.address());
+        customer.setEmail(customerDto.email());
+        customer.setPhoneNumber(customerDto.phoneNumber());
+
         return this.customerRepository.save(customer);
     }
 

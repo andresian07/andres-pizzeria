@@ -1,10 +1,11 @@
 package com.andres.pizzeria.web.controller;
 
+import com.andres.pizzeria.dto.PizzaCreateDto;
 import com.andres.pizzeria.dto.PizzaResponseDto;
 import com.andres.pizzeria.dto.PizzaUpdateDto;
 import com.andres.pizzeria.dto.PizzaUpdatePriceDto;
-import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.service.PizzaService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -87,7 +88,7 @@ public class PizzaController {
 
 
     @PostMapping
-    public ResponseEntity<PizzaResponseDto> add(@RequestBody PizzaEntity pizza){
+    public ResponseEntity<PizzaResponseDto> add(@Valid @RequestBody PizzaCreateDto pizza){
         return ResponseEntity.ok(this.pizzaService.save(pizza));
     }
 
