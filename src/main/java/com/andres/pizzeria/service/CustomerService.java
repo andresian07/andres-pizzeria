@@ -1,8 +1,9 @@
 package com.andres.pizzeria.service;
 
-import com.andres.pizzeria.dto.CustomerCreateDto;
-import com.andres.pizzeria.dto.CustomerUpdateDto;
+import com.andres.pizzeria.dto.*;
 import com.andres.pizzeria.persistence.entity.CustomerEntity;
+import com.andres.pizzeria.persistence.entity.OrderEntity;
+import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.persistence.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,23 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public List<CustomerEntity> getAll(){
-        return this.customerRepository.findAll();
+    public List<CustomerResponseDto> getAll(){
+        List<CustomerEntity> customers = this.customerRepository.findAll();
+        List<CustomerResponseDto> allCustomers = customers.stream().map(customer -> toResponseDto(customer)).toList();
+        return allCustomers;
+
     }
 
-    public CustomerEntity get(String idCustomer){
-        return this.customerRepository.findById(idCustomer).orElse(null);
+    public CustomerResponseDto get(String idCustomer){
+        Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
+        if (optionalCustomer.isPresent()) {
+            CustomerEntity customerExistente = optionalCustomer.get();
+            return toResponseDto(customerExistente);
+        }
+        return null;
     }
 
-    public CustomerEntity save(CustomerCreateDto customerDto){
+    public CustomerResponseDto save(CustomerCreateDto customerDto){
         CustomerEntity customer = new CustomerEntity();
         customer.setIdCustomer(customerDto.idCustomer());
         customer.setName(customerDto.name());
@@ -34,10 +43,22 @@ public class CustomerService {
         customer.setEmail(customerDto.email());
         customer.setPhoneNumber(customerDto.phoneNumber());
 
-        return this.customerRepository.save(customer);
+        CustomerEntity customerGuardado = this.customerRepository.save(customer);
+        return toResponseDto(customerGuardado);
     }
 
-    public CustomerEntity update(String idCustomer, CustomerUpdateDto customerDto) {
+    private CustomerResponseDto toResponseDto(CustomerEntity customer) {
+        return new CustomerResponseDto(
+               customer.getIdCustomer(),
+               customer.getName(),
+               customer.getAddress(),
+               customer.getEmail(),
+               customer.getPhoneNumber()
+        );
+    }
+
+
+    public CustomerResponseDto update(String idCustomer, CustomerUpdateDto customerDto) {
         Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
 
         if (optionalCustomer.isPresent()) {
@@ -56,25 +77,29 @@ public class CustomerService {
                 customerExistente.setPhoneNumber(customerDto.phoneNumber());
             }
 
-            return this.customerRepository.save(customerExistente);
+            return toResponseDto(this.customerRepository.save(customerExistente));
         }
 
         return null;
     }
 
-    public CustomerEntity delete(String idCustomer){
+    public CustomerResponseDto delete(String idCustomer){
         Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
         if (optionalCustomer.isPresent()) {
             CustomerEntity customerABorrar = optionalCustomer.get();
             this.customerRepository.delete(customerABorrar);
-            return customerABorrar;
+            return toResponseDto(customerABorrar);
         }
 
         return null;
     }
 
-    public CustomerEntity findByPhone(String phone){
-        return this.customerRepository.findByPhone(phone);
+    public CustomerResponseDto findByPhone(String phone){
+        CustomerEntity customerPhone = this.customerRepository.findByPhone(phone);
+        if (customerPhone != null ){
+            return toResponseDto(customerPhone);
+        }
+        return null;
     }
 
 }

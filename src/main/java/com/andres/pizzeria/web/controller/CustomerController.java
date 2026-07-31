@@ -1,8 +1,8 @@
 package com.andres.pizzeria.web.controller;
 
 import com.andres.pizzeria.dto.CustomerCreateDto;
+import com.andres.pizzeria.dto.CustomerResponseDto;
 import com.andres.pizzeria.dto.CustomerUpdateDto;
-import com.andres.pizzeria.persistence.entity.CustomerEntity;
 import com.andres.pizzeria.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +23,13 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerEntity>> getAll(){
+    public ResponseEntity<List<CustomerResponseDto>> getAll(){
         return ResponseEntity.ok(this.customerService.getAll());
     }
 
     @GetMapping("/{idCustomer}")
-    public ResponseEntity<CustomerEntity> get(@PathVariable String idCustomer){
-        CustomerEntity customer = this.customerService.get(idCustomer);
+    public ResponseEntity<CustomerResponseDto> get(@PathVariable String idCustomer){
+        CustomerResponseDto customer = this.customerService.get(idCustomer);
         if (customer != null) {
             return ResponseEntity.ok(customer);
         }
@@ -37,19 +37,19 @@ public class CustomerController {
     }
 
     @GetMapping("/phone/{phone}")
-    public ResponseEntity<CustomerEntity> findByPhone(@PathVariable String phone){
+    public ResponseEntity<CustomerResponseDto> findByPhone(@PathVariable String phone){
 
         return ResponseEntity.ok(this.customerService.findByPhone(phone));
     }
 
     @PostMapping
-    public ResponseEntity<CustomerEntity> add(@Valid @RequestBody CustomerCreateDto customer){
+    public ResponseEntity<CustomerResponseDto> add(@Valid @RequestBody CustomerCreateDto customer){
         return ResponseEntity.ok(this.customerService.save(customer));
     }
 
     @PutMapping("/{idCustomer}")
-    public ResponseEntity<CustomerEntity> update(@PathVariable String idCustomer, @RequestBody CustomerUpdateDto customerDto){
-        CustomerEntity updateCustomer = this.customerService.update(idCustomer, customerDto);
+    public ResponseEntity<CustomerResponseDto> update(@PathVariable String idCustomer, @RequestBody CustomerUpdateDto customerDto){
+        CustomerResponseDto updateCustomer = this.customerService.update(idCustomer, customerDto);
         if (updateCustomer != null) {
             return ResponseEntity.ok(updateCustomer);
         }
@@ -57,8 +57,8 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{idCustomer}")
-    public ResponseEntity<CustomerEntity> delete(@PathVariable String idCustomer){
-        CustomerEntity deleteCustomer = this.customerService.delete(idCustomer);
+    public ResponseEntity<CustomerResponseDto> delete(@PathVariable String idCustomer){
+        CustomerResponseDto deleteCustomer = this.customerService.delete(idCustomer);
         if (deleteCustomer != null) {
             return ResponseEntity.ok(deleteCustomer);
         }

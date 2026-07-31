@@ -29,8 +29,7 @@ public class PizzaController {
     }
 
     @GetMapping("/{idPizza}")
-    public ResponseEntity<PizzaResponseDto
-            > get(@PathVariable int idPizza){
+    public ResponseEntity<PizzaResponseDto> get(@PathVariable int idPizza){
         PizzaResponseDto pizzaResponseDto = this.pizzaService.get(idPizza);
         if (pizzaResponseDto != null){
             return ResponseEntity.ok(pizzaResponseDto);
