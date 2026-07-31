@@ -4,6 +4,7 @@ import com.andres.pizzeria.dto.CustomerCreateDto;
 import com.andres.pizzeria.dto.CustomerUpdateDto;
 import com.andres.pizzeria.persistence.entity.CustomerEntity;
 import com.andres.pizzeria.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerEntity> add(@RequestBody CustomerCreateDto customer){
+    public ResponseEntity<CustomerEntity> add(@Valid @RequestBody CustomerCreateDto customer){
         return ResponseEntity.ok(this.customerService.save(customer));
     }
 

@@ -1,9 +1,12 @@
 package com.andres.pizzeria.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public record CustomerCreateDto(
-        String idCustomer,
-        String name,
-        String address,
-        String email,
-        String phoneNumber
+        @NotBlank String idCustomer,
+        @NotBlank String name,
+        @NotBlank String address,
+        @NotBlank @Email String email,
+        @NotBlank String phoneNumber
 ) {}

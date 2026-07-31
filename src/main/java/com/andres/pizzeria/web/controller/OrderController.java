@@ -5,6 +5,7 @@ import com.andres.pizzeria.dto.OrderResponseDto;
 import com.andres.pizzeria.dto.OrderUpdateDto;
 import com.andres.pizzeria.persistence.projection.OrderSummary;
 import com.andres.pizzeria.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,7 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> add(@RequestBody OrderCreateDto order){
+    public ResponseEntity<OrderResponseDto> add(@Valid @RequestBody OrderCreateDto order){
         return ResponseEntity.ok(this.orderService.save(order));
     }
 

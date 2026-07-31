@@ -1,9 +1,13 @@
 package com.andres.pizzeria.dto;
 
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public record OrderItemCreateDto(
-        Integer idPizza,
-        BigDecimal quantity,
-        BigDecimal price
+        @NotNull Integer idPizza,
+        @NotNull @Positive BigDecimal quantity,
+        @NotNull @Positive BigDecimal price
 ) {}
