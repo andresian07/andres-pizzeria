@@ -30,7 +30,8 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/pizzas/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/pizzas/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
@@ -57,9 +58,18 @@ public class SecurityConfig {
             .password(encoder.encode("admin123"))
             .roles("ADMIN")
             .build();
-        return new InMemoryUserDetailsManager(admin);
+
+        UserDetails employee = User.builder()
+                .username("employee")
+                .password(encoder.encode("employee123"))
+                .roles("EMPLOYEE")
+                .build();
+        return new InMemoryUserDetailsManager(admin,employee);
+
+
 
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
