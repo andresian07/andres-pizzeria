@@ -23,25 +23,23 @@ public class UserSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() == 0) {
-            UserEntity admin = new UserEntity();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            UserRoleEntity adminRole = new UserRoleEntity("admin", Role.ADMIN);
-            admin.setLocked(false);
-            admin.setDisabled(false);
+        seedUserIfMissing("admin", "admin123", Role.ADMIN);
+        seedUserIfMissing("employee", "employee123", Role.EMPLOYEE);
+        seedUserIfMissing("customer", "customer123", Role.CUSTOMER);
+    }
 
-            UserEntity employee = new UserEntity();
-            employee.setUsername("employee");
-            employee.setPassword(passwordEncoder.encode("employee123"));
-            UserRoleEntity employeeRole = new UserRoleEntity("employee", Role.EMPLOYEE);
-            employee.setLocked(false);
-            employee.setDisabled(false);
-
-            userRepository.save(admin);
-            userRoleRepository.save(employeeRole);
-            userRoleRepository.save(adminRole);
-            userRepository.save(employee);
+    private void seedUserIfMissing(String username, String rawPassword, Role role) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            return;
         }
+
+        UserEntity user = new UserEntity();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setLocked(false);
+        user.setDisabled(false);
+        userRepository.save(user);
+
+        userRoleRepository.save(new UserRoleEntity(username, role));
     }
 }

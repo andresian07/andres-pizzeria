@@ -3,7 +3,9 @@ package com.andres.pizzeria.web.controller;
 import com.andres.pizzeria.dto.CustomerCreateDto;
 import com.andres.pizzeria.dto.CustomerResponseDto;
 import com.andres.pizzeria.dto.CustomerUpdateDto;
+import com.andres.pizzeria.dto.OrderResponseDto;
 import com.andres.pizzeria.service.CustomerService;
+import com.andres.pizzeria.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,12 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final OrderService orderService;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, OrderService orderService) {
         this.customerService = customerService;
+        this.orderService = orderService;
     }
 
     @GetMapping
@@ -40,6 +44,11 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDto> findByPhone(@PathVariable String phone){
 
         return ResponseEntity.ok(this.customerService.findByPhone(phone));
+    }
+
+    @GetMapping("/{idCustomer}/orders")
+    public ResponseEntity<List<OrderResponseDto>> getCustomerOrders(@PathVariable String idCustomer){
+        return ResponseEntity.ok(this.orderService.getCustomersOrders(idCustomer));
     }
 
     @PostMapping

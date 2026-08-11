@@ -31,6 +31,8 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	//Validaciones
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //JWT auth0
+    implementation 'com.auth0:java-jwt:4.6.0'
 }
 
 tasks.named('test') {

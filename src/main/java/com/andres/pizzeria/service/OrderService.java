@@ -13,6 +13,7 @@ import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.persistence.projection.OrderSummary;
 import com.andres.pizzeria.persistence.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,7 @@ public class OrderService {
         return orders.stream().map(order -> toResponseDto(order)).toList();
     }
 
+    @Secured("ROLE_ADMIN")
     public List<OrderResponseDto> getCustomersOrders(String idCustomer){
         List<OrderEntity> orders = this.orderRepository.findCustomerOrders(idCustomer);
         return orders.stream().map(order -> toResponseDto(order)).toList();
