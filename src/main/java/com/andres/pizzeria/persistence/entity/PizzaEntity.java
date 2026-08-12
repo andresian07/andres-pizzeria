@@ -5,13 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 
 @EntityListeners({AuditingEntityListener.class, AuditPizzaListener.class})
 @Entity
@@ -19,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PizzaEntity implements Serializable {
+public class PizzaEntity extends AuditableEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Transient
@@ -49,13 +46,6 @@ public class PizzaEntity implements Serializable {
     @Column(nullable = false)
     private Boolean available;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 
     @Override
     public String toString() {
@@ -67,8 +57,8 @@ public class PizzaEntity implements Serializable {
                 ", vegetarian=" + vegetarian +
                 ", vegan=" + vegan +
                 ", available=" + available +
-                ", createdDate=" + createdDate +
-                ", lastModifiedDate=" + lastModifiedDate +
+                ", createdDate=" + getCreatedDate() +
+                ", lastModifiedDate=" + getLastModifiedDate() +
                 '}';
     }
 }

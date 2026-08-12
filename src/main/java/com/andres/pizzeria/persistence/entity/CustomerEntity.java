@@ -8,11 +8,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -20,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter // Si usas Lombok
 @NoArgsConstructor
-public class CustomerEntity {
+public class CustomerEntity extends AuditableEntity{
     @Id
     @Column(name = "id_customer", length = 15, nullable = false)
     private String idCustomer;
@@ -37,11 +33,4 @@ public class CustomerEntity {
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 }

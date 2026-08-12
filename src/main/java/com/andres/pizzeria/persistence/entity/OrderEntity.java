@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -21,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderEntity implements Serializable {
+public class OrderEntity extends AuditableEntity implements Serializable {
     @Transient
     private transient OrderEntity snapshot;
 
@@ -53,13 +51,6 @@ public class OrderEntity implements Serializable {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> items;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 
     @Override
     public String toString() {
@@ -70,8 +61,8 @@ public class OrderEntity implements Serializable {
                 ", total=" + total +
                 ", method=" + method +
                 ", additionalNotes='" + additionalNotes + '\'' +
-                ", createdDate=" + createdDate +
-                ", lastModifiedDate=" + lastModifiedDate +
+                ", createdDate=" + getCreatedDate() +
+                ", lastModifiedDate=" + getLastModifiedDate() +
                 '}';
 
 
