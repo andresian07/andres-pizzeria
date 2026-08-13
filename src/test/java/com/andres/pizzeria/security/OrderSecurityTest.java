@@ -29,6 +29,20 @@ public class OrderSecurityTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    @WithMockUser(authorities = "RANDOM_ORDER")
+    void empleadoConAutoridadPuedeUsarRandomPromo() throws Exception {
+        mockMvc.perform(get("/api/orders/random-promo?idCustomer=999&method=C"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "CUSTOMER")
+    void clienteSinAutoridadNoPuedeUsarRandomPromo() throws Exception {
+        mockMvc.perform(get("/api/orders/random-promo?idCustomer=999&method=C"))
+                .andExpect(status().isForbidden());
+    }
+
 
     @Test
     void sinAutenticarNoPuedeVerOrdenes() throws Exception {
