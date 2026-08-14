@@ -5,6 +5,7 @@ import com.andres.pizzeria.persistence.entity.CustomerEntity;
 import com.andres.pizzeria.persistence.entity.OrderEntity;
 import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.persistence.repository.CustomerRepository;
+import com.andres.pizzeria.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,9 @@ public class CustomerService {
 
     public CustomerResponseDto get(String idCustomer){
         Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
-        if (optionalCustomer.isPresent()) {
-            CustomerEntity customerExistente = optionalCustomer.get();
-            return toResponseDto(customerExistente);
-        }
-        return null;
+        CustomerEntity customerExistente = optionalCustomer.orElseThrow(() -> new NotFoundException("Cliente no encontrado con id " + idCustomer));
+        return toResponseDto(customerExistente);
+
     }
 
     public CustomerResponseDto save(CustomerCreateDto customerDto){
@@ -61,37 +60,31 @@ public class CustomerService {
     public CustomerResponseDto update(String idCustomer, CustomerUpdateDto customerDto) {
         Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
 
-        if (optionalCustomer.isPresent()) {
-            CustomerEntity customerExistente = optionalCustomer.get();
-
-            if (customerDto.name() != null) {
+        CustomerEntity customerExistente = optionalCustomer.orElseThrow(() -> new NotFoundException("Cliente no encontrado con id " + idCustomer));
+        if (customerDto.name() != null) {
                 customerExistente.setName(customerDto.name());
             }
-            if (customerDto.address() != null) {
+        if (customerDto.address() != null) {
                 customerExistente.setAddress(customerDto.address());
             }
-            if (customerDto.email() != null) {
+        if (customerDto.email() != null) {
                 customerExistente.setEmail(customerDto.email());
             }
-            if (customerDto.phoneNumber() != null) {
+        if (customerDto.phoneNumber() != null) {
                 customerExistente.setPhoneNumber(customerDto.phoneNumber());
             }
 
-            return toResponseDto(this.customerRepository.save(customerExistente));
-        }
+        return toResponseDto(this.customerRepository.save(customerExistente));
 
-        return null;
     }
 
     public CustomerResponseDto delete(String idCustomer){
         Optional<CustomerEntity> optionalCustomer = this.customerRepository.findById(idCustomer);
-        if (optionalCustomer.isPresent()) {
-            CustomerEntity customerABorrar = optionalCustomer.get();
-            this.customerRepository.delete(customerABorrar);
-            return toResponseDto(customerABorrar);
-        }
+        CustomerEntity customerABorrar = optionalCustomer.orElseThrow(() -> new NotFoundException("Cliente no encontrado con id " + idCustomer));
+        this.customerRepository.delete(customerABorrar);
+        return toResponseDto(customerABorrar);
 
-        return null;
+
     }
 
     public CustomerResponseDto findByPhone(String phone){
@@ -99,7 +92,7 @@ public class CustomerService {
         if (customerPhone != null ){
             return toResponseDto(customerPhone);
         }
-        return null;
+        throw new NotFoundException("Cliente no encontrado con teléfono " + phone);
     }
 
 }

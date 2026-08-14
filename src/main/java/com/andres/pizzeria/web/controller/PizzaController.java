@@ -30,11 +30,7 @@ public class PizzaController {
 
     @GetMapping("/{idPizza}")
     public ResponseEntity<PizzaResponseDto> get(@PathVariable int idPizza){
-        PizzaResponseDto pizzaResponseDto = this.pizzaService.get(idPizza);
-        if (pizzaResponseDto != null){
-            return ResponseEntity.ok(pizzaResponseDto);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(this.pizzaService.get(idPizza));
     }
 
     @GetMapping("/available")
@@ -97,10 +93,8 @@ public class PizzaController {
     @PutMapping("/{idPizza}")
     public ResponseEntity<PizzaResponseDto> update(@PathVariable int idPizza,@RequestBody PizzaUpdateDto pizzaDto){
         PizzaResponseDto updatePizza = this.pizzaService.update(idPizza, pizzaDto);
-        if(updatePizza != null){
-            return ResponseEntity.ok(updatePizza);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updatePizza);
+
     }
 
     @PutMapping("/updateprice/{idPizza}")
@@ -116,13 +110,7 @@ public class PizzaController {
     @DeleteMapping("/{idPizza}")
     public ResponseEntity<PizzaResponseDto> delete(@PathVariable int idPizza){
         PizzaResponseDto deletePizza = this.pizzaService.delete(idPizza);
-        if(deletePizza != null){
-            return ResponseEntity.ok(deletePizza);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(deletePizza);
+
     }
-
-
-
-
 }

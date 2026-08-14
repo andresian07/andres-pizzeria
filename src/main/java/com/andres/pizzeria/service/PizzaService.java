@@ -9,6 +9,7 @@ import com.andres.pizzeria.persistence.entity.OrderEntity;
 import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.persistence.repository.PizzaPagSortRepository;
 import com.andres.pizzeria.persistence.repository.PizzaRepository;
+import com.andres.pizzeria.web.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,11 +39,9 @@ public class PizzaService {
 
     public PizzaResponseDto get(int idPizza){
         Optional<PizzaEntity> optionalPizza = this.pizzaRepository.findById(idPizza);
-        if (optionalPizza.isPresent()) {
-            PizzaEntity pizzaExistente = optionalPizza.get();
-            return toResponseDto(pizzaExistente);
-        }
-        return null;
+        PizzaEntity pizzaExistente = optionalPizza.orElseThrow(() -> new NotFoundException("pizza no encontada con el id: " + idPizza));
+        return toResponseDto(pizzaExistente);
+
     }
 
     private PizzaResponseDto toResponseDto(PizzaEntity pizza) {
@@ -73,36 +72,28 @@ public class PizzaService {
     public PizzaResponseDto update(int idPizza, PizzaUpdateDto pizzaDto) {
         // 1. Buscamos la pizza en la base de datos (findById devuelve un Optional)
         Optional<PizzaEntity> optionalPizza = this.pizzaRepository.findById(idPizza);
+        PizzaEntity pizzaExistente = optionalPizza.orElseThrow(() -> new NotFoundException("pizza no encontrada con el id: " + idPizza));
 
-        if (optionalPizza.isPresent()) {
-            // 2. Extraemos la entidad real que estaba guardada
-            PizzaEntity pizzaExistente = optionalPizza.get();
-
-            // 3. Le aplicamos los cambios parciales del DTO (validando que no vengan nulos)
-            if (pizzaDto.price() != null) {
+        if (pizzaDto.price() != null) {
                 pizzaExistente.setPrice(pizzaDto.price());
             }
-            if (pizzaDto.available() != null) {
+        if (pizzaDto.available() != null) {
                 pizzaExistente.setAvailable(pizzaDto.available());
             }
 
             // 4. Guardamos la entidad actualizada y la devolvemos
-            return toResponseDto(this.pizzaRepository.save(pizzaExistente));
-        }
+        return toResponseDto(this.pizzaRepository.save(pizzaExistente));
+
 
         // 5. ¿Qué pasa si el ID no existe? Devolvemos null (o una excepción)
-        return null;
     }
 
     public PizzaResponseDto delete(int idPizza){
         Optional<PizzaEntity> optionalPizza = this.pizzaRepository.findById(idPizza);
-        if (optionalPizza.isPresent()) {
-            PizzaEntity pizzaABorrar = optionalPizza.get(); // 1. Extraemos la entidad real
-            this.pizzaRepository.delete(pizzaABorrar);     // 2. La borramos (no lleva return)
-            return toResponseDto(pizzaABorrar);             // 3. Devolvemos la pizza que borramos
-        }
+        PizzaEntity pizzaABorrar = optionalPizza.orElseThrow(() -> new NotFoundException("pizza no encontrada con id: " + idPizza));
+        this.pizzaRepository.delete(pizzaABorrar);
+        return toResponseDto(pizzaABorrar);
 
-        return null; // Si no existía, devolvemos null
     }
 
     public Page<PizzaResponseDto> getAvailable(int page, int elements, String sortBy, String sortDirection){
@@ -122,7 +113,10 @@ public class PizzaService {
 
     public PizzaResponseDto getByName(String name){
         PizzaEntity pizza = this.pizzaRepository.findAllByAvailableTrueAndNameIgnoreCase(name);
-        return pizza != null ? toResponseDto(pizza) : null;
+        if (pizza == null) {
+            throw new NotFoundException("no se encontro la pizza: " + name);
+        }
+        return toResponseDto(pizza);
     }
 
     public List<PizzaResponseDto> getByIngredient(String ingredient){

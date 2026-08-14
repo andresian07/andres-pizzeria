@@ -27,10 +27,8 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<OrderResponseDto>> getAll(){
         List<OrderResponseDto> orderResponseDto = this.orderService.getAll();
-        if (orderResponseDto != null){
-            return ResponseEntity.ok(orderResponseDto);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(orderResponseDto);
+
 
 
     }
@@ -38,10 +36,8 @@ public class OrderController {
     @GetMapping("/{idOrder}")
     public ResponseEntity<OrderResponseDto> get(@PathVariable int idOrder){
         OrderResponseDto orderResponseDto = this.orderService.get(idOrder);
-        if (orderResponseDto != null){
-            return ResponseEntity.ok(orderResponseDto);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(orderResponseDto);
+
 
 
 
@@ -82,12 +78,7 @@ public class OrderController {
     @PutMapping("/{idOrder}")
     public ResponseEntity<OrderResponseDto> update(@PathVariable int idOrder, @RequestBody OrderUpdateDto orderDto){
         OrderResponseDto updateOrder = this.orderService.update(idOrder, orderDto);
-        if(updateOrder != null){
-            return ResponseEntity.ok(updateOrder);
-        }
-
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updateOrder);
     }
 
     @GetMapping("/random-promo")
@@ -101,10 +92,6 @@ public class OrderController {
 
     @DeleteMapping("/{idOrder}")
     public ResponseEntity<OrderResponseDto> delete(@PathVariable int idOrder){
-        OrderResponseDto deleteOrder = this.orderService.delete(idOrder);
-        if(deleteOrder != null){
-            return ResponseEntity.ok(deleteOrder);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(this.orderService.delete(idOrder));
     }
 }

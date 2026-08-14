@@ -33,11 +33,7 @@ public class CustomerController {
 
     @GetMapping("/{idCustomer}")
     public ResponseEntity<CustomerResponseDto> get(@PathVariable String idCustomer){
-        CustomerResponseDto customer = this.customerService.get(idCustomer);
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(this.customerService.get(idCustomer));
     }
 
     @GetMapping("/phone/{phone}")
@@ -58,19 +54,11 @@ public class CustomerController {
 
     @PutMapping("/{idCustomer}")
     public ResponseEntity<CustomerResponseDto> update(@PathVariable String idCustomer, @RequestBody CustomerUpdateDto customerDto){
-        CustomerResponseDto updateCustomer = this.customerService.update(idCustomer, customerDto);
-        if (updateCustomer != null) {
-            return ResponseEntity.ok(updateCustomer);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(this.customerService.update(idCustomer, customerDto));
     }
 
     @DeleteMapping("/{idCustomer}")
     public ResponseEntity<CustomerResponseDto> delete(@PathVariable String idCustomer){
-        CustomerResponseDto deleteCustomer = this.customerService.delete(idCustomer);
-        if (deleteCustomer != null) {
-            return ResponseEntity.ok(deleteCustomer);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(this.customerService.delete(idCustomer));
     }
 }

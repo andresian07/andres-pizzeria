@@ -12,6 +12,7 @@ import com.andres.pizzeria.persistence.entity.OrderItemEntity;
 import com.andres.pizzeria.persistence.entity.PizzaEntity;
 import com.andres.pizzeria.persistence.projection.OrderSummary;
 import com.andres.pizzeria.persistence.repository.OrderRepository;
+import com.andres.pizzeria.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
@@ -40,12 +41,9 @@ public class OrderService {
     }
 
     public OrderResponseDto get(int idOrder){
-        OrderEntity order = this.orderRepository.findById(idOrder).orElse(null);
-        if( order != null){
-            return  toResponseDto(order);
-        }
+        OrderEntity order = this.orderRepository.findById(idOrder).orElseThrow(() -> new NotFoundException("no se encontro la orden: " + idOrder));
 
-        return null;
+        return  toResponseDto(order);
     }
 
     public List<OrderResponseDto> getTodayOrders(){
@@ -127,22 +125,21 @@ public class OrderService {
 
     public OrderResponseDto update(int idOrder, OrderUpdateDto orderUpdateDto) {
         Optional<OrderEntity> optionalOrder = this.orderRepository.findById(idOrder);
+        OrderEntity orderExistente = optionalOrder.orElseThrow(() -> new NotFoundException("no se encontro la orden: " + idOrder));
 
-        if (optionalOrder.isPresent()) {
-            OrderEntity orderExistente = optionalOrder.get();
 
-            if (orderUpdateDto.method() != null) {
+        if (orderUpdateDto.method() != null) {
                 orderExistente.setMethod(orderUpdateDto.method());
             }
-            if (orderUpdateDto.additionalNotes() != null) {
+        if (orderUpdateDto.additionalNotes() != null) {
                 orderExistente.setAdditionalNotes(orderUpdateDto.additionalNotes());
             }
 
-            OrderEntity updatedOrder = this.orderRepository.save(orderExistente);
-            return toResponseDto(updatedOrder);
-        }
+        OrderEntity updatedOrder = this.orderRepository.save(orderExistente);
+        return toResponseDto(updatedOrder);
 
-        return null;
+
+
     }
 
     public OrderSummary takeRandomPizzaOrder(String idCustomer, String method) {
@@ -159,13 +156,10 @@ public class OrderService {
     public OrderResponseDto delete(int idOrder
     ){
         Optional<OrderEntity> optionalOrder = this.orderRepository.findById(idOrder);
-        if (optionalOrder.isPresent()) {
-            OrderEntity orderABorrar = optionalOrder.get(); // 1. Extraemos la entidad real
-            OrderResponseDto deletedOrderDto = toResponseDto(orderABorrar); // 2. La convertimos antes de borrarla
-            this.orderRepository.delete(orderABorrar);     // 3. La borramos (no lleva return)
-            return deletedOrderDto;                         // 4. Devolvemos el DTO de la order que borramos
-        }
+        OrderEntity orderABorrar = optionalOrder.orElseThrow(() -> new NotFoundException("no se encontro la orden: " + idOrder));
+        OrderResponseDto deletedOrderDto = toResponseDto(orderABorrar); // 2. La convertimos antes de borrarla
+        this.orderRepository.delete(orderABorrar);     // 3. La borramos (no lleva return)
+        return deletedOrderDto;                         // 4. Devolvemos el DTO de la order que borramos
 
-        return null; // Si no existía, devolvemos null
     }
 }
