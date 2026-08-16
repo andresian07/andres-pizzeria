@@ -40,6 +40,7 @@ public class SecurityConfig {
                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                .authorizeHttpRequests(auth -> auth
                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                       .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs").permitAll()
                        .requestMatchers("/api/auth/**").permitAll()
                        .requestMatchers(HttpMethod.GET,"/api/pizzas/**").permitAll()
                        .requestMatchers(HttpMethod.GET,"/api/orders/random-promo").hasAuthority("RANDOM_ORDER")
